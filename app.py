@@ -19,6 +19,7 @@ from langchain_community.utilities import SQLDatabase
 from langchain.agents import create_sql_agent
 from langchain_openai import ChatOpenAI
 
+openai_api_key = st.secrets["openai_key"]
 
 # Streamlit app layout
 st.title("Text-to-SQL Agent to chat with your Data:")
@@ -55,7 +56,7 @@ tables = upload_files()
 # # Initialize the SQLDatabase object
 db = SQLDatabase(engine)
 # # Initialize the OpenAI LLM
-llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0125", openai_api_key=openai_key )
+llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0125", openai_api_key=openai_api_key )
 # # Create the SQL agent
 sql_agent = create_sql_agent(llm=llm, db=db, verbose=True, agent_type="zero-shot-react-description")
 
