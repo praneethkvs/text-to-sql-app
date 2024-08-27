@@ -96,7 +96,7 @@ if tables:
             response = sql_agent.run(prompt, callbacks=[sql_handler])
             
             st.write("**Answer:**")
-            with st.container( height=100):
+            with st.container():
                 st.write(response)
                 
             st.write("")  
