@@ -52,6 +52,7 @@ def upload_files():
 class SQLHandler(BaseCallbackHandler):
     def __init__(self):
         self.sql_result = None
+        self.sql_result_log = []
 
     def on_agent_action(self, action: AgentAction, **kwargs):
         #print(f"Action Tool: {action.tool}")
@@ -59,6 +60,8 @@ class SQLHandler(BaseCallbackHandler):
         it means we're submitting the SQL and we can record it as the final SQL."""
         if action.tool == "sql_db_query":
             self.sql_result = action.tool_input
+        
+        self.sql_result_log.append(action.log)    
             #print(f"SQL Query Captured: {self.sql_result}")
 
 sql_handler = SQLHandler()
@@ -80,7 +83,7 @@ llm = ChatOpenAI(temperature=0.0, model="gpt-3.5-turbo-0125", openai_api_key=ope
 # # Create the SQL agent
 sql_agent = create_sql_agent(llm=llm, db=db, verbose=True, agent_type="zero-shot-react-description")
 
-
+output_text = ""
 
 # Input prompt and get response
 if tables:
@@ -97,6 +100,12 @@ if tables:
             st.code(sql_handler.sql_result, language='sql')
             with st.container( height=200):
                 st.write(sql_handler.sql_result)
+
+            st.write("**Steps and Actions taken by the Agent:**")
+            for (line,i) in zip(sql_handler.sql_result_log,range(0,len(sql_handler.sql_result_log) + 1)):
+                output_text += f"Step - {i+1}:\n{line}\n\n"
+            st.text(output_text)
+            
         else:
             st.write("Please enter a query.")
 
