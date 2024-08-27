@@ -99,9 +99,11 @@ if tables:
             with st.container( height=100):
                 st.write(response)
                 
+            st.write("")  
             st.write("**SQL Query:**")
             st.code(sql_handler.sql_result, language='sql')
-            
+
+            st.write("")  
             st.write("**Steps and Actions taken by the Agent:**")
             for (line,i) in zip(sql_handler.sql_result_log,range(0,len(sql_handler.sql_result_log) + 1)):
                 output_text += f"Step - {i+1}:\n{line}\n\n"
