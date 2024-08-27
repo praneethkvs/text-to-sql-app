@@ -26,7 +26,7 @@ openai_api_key = st.secrets["openai_key"]
 
 # Streamlit app layout
 st.title("Text-to-SQL Agent to chat with your Data:")
-st.markdown("*For this prototype app, we will be using CSV Files to create the Database,  \n you can modify the code to Connect to a database of your choice.*")
+st.markdown("*For this prototype app, we will be using CSV Files to create the Database, you can modify the code   \nto Connect to a database of your choice.  \nNote:Data is sent to openAI, please do not upload any Confidential Data.*")
 st.markdown("**Step -1:** Upload CSV Files of data, where each file corresponds to a table.  \nYou can use Sample Data Files and Sample Questions Provided [Here.](https://github.com/praneethkvs/text-to-sql-app)  \n**Step -2:** Once files are successfully uploaded, you should see first 5 rows of data in the tables,    \nEnter your Query in the space provided and hit Submit Query.")
 
 
