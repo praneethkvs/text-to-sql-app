@@ -10,6 +10,8 @@ Created on Sat Aug 24 15:01:33 2024
 #and run  python -m streamlit run app.py
 
 import streamlit as st
+st.set_page_config(layout="wide")
+
 import pandas as pd
 
 import sqlite3
@@ -26,9 +28,8 @@ openai_api_key = st.secrets["openai_key"]
 
 # Streamlit app layout
 st.title("Text-to-SQL Agent to chat with your Data:")
-st.markdown("*For this prototype app, we will be using CSV Files to create the Database, you can modify the code   \nto Connect to a database of your choice.  \nNote - Data is sent to openAI, please do not upload any Confidential Data.*")
-st.markdown("**Step -1:** Upload CSV Files of data, where each file corresponds to a table.  \nYou can use Sample Data Files and Sample Questions Provided [Here.](https://github.com/praneethkvs/text-to-sql-app)  \n**Step -2:** Once files are successfully uploaded, you should see first 5 rows of data in the tables,    \nEnter your Query in the space provided and hit Submit Query.")
-
+st.markdown("*For this prototype app, we will be using CSV Files to create the Database, you can modify the code to Connect to a database of your choice.  \nNote - Data is sent to openAI, please do not upload any Confidential Data.*")
+st.markdown("**Step -1:** Upload CSV Files of data, where each file corresponds to a table. You can use Sample Data Files and Sample Questions Provided [Here.](https://github.com/praneethkvs/text_to_sql_bot)  \n**Step -2:** Once files are successfully uploaded, you should see first 5 rows of data in the tables, Enter your Query in the space provided and hit Submit Query.")
 
 
 
@@ -93,14 +94,14 @@ if tables:
     if st.button("Submit Query"):
         if prompt:
             response = sql_agent.run(prompt, callbacks=[sql_handler])
-            st.write("**Response from SQL agent:**")
-            with st.container( height=200):
+            
+            st.write("**Answer:**")
+            with st.container( height=100):
                 st.write(response)
-            st.write("**Final SQL Query:**")
+                
+            st.write("**SQL Query:**")
             st.code(sql_handler.sql_result, language='sql')
-            with st.container( height=200):
-                st.write(sql_handler.sql_result)
-
+            
             st.write("**Steps and Actions taken by the Agent:**")
             for (line,i) in zip(sql_handler.sql_result_log,range(0,len(sql_handler.sql_result_log) + 1)):
                 output_text += f"Step - {i+1}:\n{line}\n\n"
