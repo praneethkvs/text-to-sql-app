@@ -19,6 +19,9 @@ from langchain_community.utilities import SQLDatabase
 from langchain.agents import create_sql_agent
 from langchain_openai import ChatOpenAI
 
+from langchain.callbacks.base import BaseCallbackHandler
+from langchain.schema import AgentAction
+
 openai_api_key = st.secrets["openai_key"]
 
 # Streamlit app layout
@@ -43,6 +46,23 @@ def upload_files():
             tables.append(file.name.split('.')[0])
         return tables
     return []
+
+
+#Callback handler to Get SQL Query
+class SQLHandler(BaseCallbackHandler):
+    def __init__(self):
+        self.sql_result = None
+
+    def on_agent_action(self, action: AgentAction, **kwargs):
+        #print(f"Action Tool: {action.tool}")
+        """Run on agent action. If the tool being used is sql_db_query,
+        it means we're submitting the SQL and we can record it as the final SQL."""
+        if action.tool == "sql_db_query":
+            self.sql_result = action.tool_input
+            #print(f"SQL Query Captured: {self.sql_result}")
+
+sql_handler = SQLHandler()
+
 
 # # Create an in-memory SQLite database and engine
 conn = sqlite3.connect(":memory:")
@@ -69,9 +89,14 @@ if tables:
                            height = 100)
     if st.button("Submit Query"):
         if prompt:
-            response = sql_agent.run(prompt)
+            response = sql_agent.run(prompt, callbacks=[sql_handler])
             st.write("**Response from SQL agent:**")
-            st.write(response)
+            with st.container( height=200):
+                st.write(response)
+            st.write("**Final SQL Query:**")
+            st.code(sql_handler.sql_result, language='sql')
+            with st.container( height=200):
+                st.write(sql_handler.sql_result)
         else:
             st.write("Please enter a query.")
 
